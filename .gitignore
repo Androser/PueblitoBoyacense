@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+
+# Build outputs
+*.zip
+food-reels-menu/.git
+
+# System files
+.DS_Store
+Thumbs.db

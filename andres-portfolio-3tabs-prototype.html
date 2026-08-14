@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Andrés Gómez — Full-Stack | Unity XR | WordPress</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #050505; color: #f3f4f6; }
+    .neon-text { text-shadow: 0 0 12px rgba(6,182,212,0.45), 0 0 24px rgba(6,182,212,0.25); }
+    .neon-border { box-shadow: 0 0 0 1px rgba(6,182,212,0.35), 0 0 20px rgba(6,182,212,0.15); }
+    .tab-active { border-bottom: 2px solid #06b6d4; color: #06b6d4; text-shadow: 0 0 12px rgba(6,182,212,0.4); }
+    .tab-inactive { color: #9ca3af; }
+    .tab-inactive:hover { color: #e5e7eb; }
+    .card-hover { transition: transform .25s ease, box-shadow .25s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 0 30px rgba(6,182,212,0.12); }
+    .section-number { font-variant-numeric: tabular-nums; color: #06b6d4; }
+    .hero-canvas { position: absolute; inset: 0; z-index: 0; opacity: .9; }
+    .hero-overlay { position: relative; z-index: 10; background: radial-gradient(circle at center, transparent 0%, #050505 85%); }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="antialiased min-h-screen">
+
+  <!-- INTRO / SELECTOR -->
+  <section id="intro" class="min-h-screen flex flex-col items-center justify-center px-6 text-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(6,182,212,0.08),transparent_60%)]"></div>
+    <p class="text-cyan-400 tracking-widest text-sm uppercase mb-4 z-10">Bilingual Senior Software Engineer</p>
+    <h1 class="text-4xl md:text-6xl font-extrabold mb-4 z-10">Andrés Leonardo Gómez Gil</h1>
+    <p class="text-gray-400 max-w-2xl text-lg mb-12 z-10">
+      Ingeniero de software bilingüe con 8+ años entregando simulaciones inmersivas, arquitecturas full-stack y soluciones WordPress escalables para clientes internacionales.
+    </p>
+
+    <h2 class="text-2xl md:text-3xl font-bold mb-8 z-10">¿Qué estás buscando?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full z-10">
+      <button onclick="showTab('fullstack')" class="group relative overflow-hidden rounded-2xl border border-cyan-500/30 bg-gray-900/60 p-8 text-left card-hover">
+        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        <div class="text-4xl mb-4">🖥️</div>
+        <h3 class="text-xl font-bold text-white mb-2">Full-Stack Developer</h3>
+        <p class="text-gray-400 text-sm">AWS · PHP/Laravel · MySQL · Web3 · Flutter · APIs REST · Cloud Architecture</p>
+      </button>
+
+      <button onclick="showTab('unity')" class="group relative overflow-hidden rounded-2xl border border-fuchsia-500/30 bg-gray-900/60 p-8 text-left card-hover">
+        <div class="absolute inset-0 bg-gradient-to-br from-fuchsia-500/10 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        <div class="text-4xl mb-4">🥽</div>
+        <h3 class="text-xl font-bold text-white mb-2">Unity / XR Developer</h3>
+        <p class="text-gray-400 text-sm">VR/AR · Oculus/Meta Quest · Industrial Training · Multiplayer · WebGL · 3D Optimization</p>
+      </button>
+
+      <button onclick="showTab('wordpress')" class="group relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-gray-900/60 p-8 text-left card-hover">
+        <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        <div class="text-4xl mb-4">🚀</div>
+        <h3 class="text-xl font-bold text-white mb-2">WordPress Full-Stack</h3>
+        <p class="text-gray-400 text-sm">Memberships · Subscriptions · Automatización · Integraciones · Dashboards · Herramientas a medida</p>
+      </button>
+    </div>
+
+    <div class="mt-12 flex flex-wrap justify-center gap-3 z-10">
+      <span class="px-3 py-1 rounded-full border border-cyan-500/30 text-cyan-300 text-xs">Unity 3D</span>
+      <span class="px-3 py-1 rounded-full border border-cyan-500/30 text-cyan-300 text-xs">C#</span>
+      <span class="px-3 py-1 rounded-full border border-cyan-500/30 text-cyan-300 text-xs">PHP/Laravel</span>
+      <span class="px-3 py-1 rounded-full border border-cyan-500/30 text-cyan-300 text-xs">AWS</span>
+      <span class="px-3 py-1 rounded-full border border-cyan-500/30 text-cyan-300 text-xs">Oculus Quest</span>
+      <span class="px-3 py-1 rounded-full border border-cyan-500/30 text-cyan-300 text-xs">Web3</span>
+      <span class="px-3 py-1 rounded-full border border-cyan-500/30 text-cyan-300 text-xs">IoT</span>
+    </div>
+  </section>
+
+  <!-- TAB NAVIGATION -->
+  <nav class="sticky top-0 z-50 bg-[#050505]/90 backdrop-blur border-b border-white/10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="font-bold text-lg tracking-tight">Andrés Gómez</div>
+      <div class="flex space-x-6 text-sm font-semibold uppercase tracking-wide">
+        <button id="nav-fullstack" onclick="showTab('fullstack')" class="tab-inactive pb-1">Full-Stack</button>
+        <button id="nav-unity" onclick="showTab('unity')" class="tab-inactive pb-1">Unity / XR</button>
+        <button id="nav-wordpress" onclick="showTab('wordpress')" class="tab-inactive pb-1">WordPress</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- TAB: FULL-STACK -->
+  <section id="tab-fullstack" class="tab-content hidden">
+    <div class="max-w-6xl mx-auto px-6 py-16">
+      <div class="mb-12">
+        <p class="text-cyan-400 text-sm uppercase tracking-widest mb-2">Perfil 01</p>
+        <h2 class="text-4xl font-extrabold mb-4">Full-Stack Developer</h2>
+        <p class="text-gray-400 max-w-3xl">
+          Arquitecto de backend, APIs y cloud. He diseñado bases de datos, servicios PHP, integraciones Web3 y despliegues AWS para aplicaciones Unity, WebGL y móviles con tráfico real.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-900/50 card-hover">
+          <img src="https://placehold.co/800x450/0f172a/06b6d4?text=TOQEN+Neraverse" alt="TOQEN" class="w-full h-56 object-cover" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">Neraverse Legendary — Backend Multiplayer</h3>
+            <p class="text-gray-400 text-sm mb-4">PHP + MySQL para rooms, autenticación, leaderboards e IAP. Photon PUN/Fusion. AWS S3/CloudFront.</p>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">PHP</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">MySQL</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">Photon</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">AWS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-900/50 card-hover">
+          <img src="https://placehold.co/800x450/0f172a/06b6d4?text=ArtemisVision+Web3" alt="ArtemisVision" class="w-full h-56 object-cover" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">ArtemisVision — Web3 Auth & APIs</h3>
+            <p class="text-gray-400 text-sm mb-4">Backend PHP para autenticación Web3, Smart Contracts con Web3.js/Moralis, despliegue S3/CloudFront.</p>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">Web3.js</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">Smart Contracts</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">AWS</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">PHP</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-900/50 card-hover">
+          <img src="https://placehold.co/800x450/0f172a/06b6d4?text=SENNOVA+APIs" alt="SENNOVA" class="w-full h-56 object-cover" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">SENNOVA — APIs para XR</h3>
+            <p class="text-gray-400 text-sm mb-4">Laravel + MySQL para metadatos de assets 3D, tracking de progreso y analytics. RESTful APIs consumidas por builds Unity WebGL.</p>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">Laravel</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">MySQL</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">REST API</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">AWS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-900/50 card-hover">
+          <img src="https://placehold.co/800x450/0f172a/06b6d4?text=Zion+Hydro+Lab" alt="Zion Hydro Lab" class="w-full h-56 object-cover" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">Zion Hydro Lab — AgriTech IoT</h3>
+            <p class="text-gray-400 text-sm mb-4">App Flutter + Supabase para cultivo hidropónico vertical. Integración de sensores IoT y computer vision para diagnóstico de salud vegetal.</p>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">Flutter</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">Supabase</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">IoT</span>
+              <span class="px-2 py-1 rounded bg-cyan-500/10 text-cyan-300">Computer Vision</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-gray-900/40 p-8">
+        <h3 class="text-2xl font-bold mb-6">Stack Full-Stack</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div class="p-3 rounded bg-white/5">PHP / Laravel</div>
+          <div class="p-3 rounded bg-white/5">JavaScript / Web3.js</div>
+          <div class="p-3 rounded bg-white/5">Java REST APIs</div>
+          <div class="p-3 rounded bg-white/5">MySQL</div>
+          <div class="p-3 rounded bg-white/5">AWS S3 / CloudFront</div>
+          <div class="p-3 rounded bg-white/5">Flutter / Dart</div>
+          <div class="p-3 rounded bg-white/5">Supabase</div>
+          <div class="p-3 rounded bg-white/5">Git / CI-CD</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB: UNITY / XR -->
+  <section id="tab-unity" class="tab-content hidden relative">
+    <!-- 3D HERO -->
+    <div class="relative h-[70vh] flex items-center justify-center overflow-hidden">
+      <canvas id="xr-hero" class="hero-canvas"></canvas>
+      <div class="hero-overlay absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+        <p class="text-fuchsia-400 text-sm uppercase tracking-widest mb-2">Perfil 02</p>
+        <h2 class="text-5xl md:text-7xl font-extrabold neon-text mb-4">Unity / XR Developer</h2>
+        <p class="text-gray-300 max-w-2xl text-lg">
+          Simuladores VR industriales, recorridos 360°, capacitación inmersiva y experiencias multiplayer optimizadas para Meta Quest y WebGL.
+        </p>
+      </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-6 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-900/50 card-hover">
+          <img src="https://placehold.co/800x450/0f172a/d946ef?text=Holcim+VR+Simulator" alt="Holcim" class="w-full h-56 object-cover" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">Holcim Virtual Training Simulator</h3>
+            <p class="text-gray-400 text-sm mb-4">Simulador VR para planta industrial. Tours 360°, hotspots interactivos, módulos de trabajo en alturas y seguridad minera.</p>
+            <div class="flex flex-wrap gap-2 text-xs mb-4">
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Unity 3D</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">XR Interaction Toolkit</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Oculus Quest</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Blender</span>
+            </div>
+            <div class="text-sm text-fuchsia-300 font-semibold">−40% onboarding time · 72–90 FPS</div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-900/50 card-hover">
+          <img src="https://placehold.co/800x450/0f172a/d946ef?text=Neraverse+Legendary" alt="Neraverse" class="w-full h-56 object-cover" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">Neraverse Legendary — Multiplayer Racing</h3>
+            <p class="text-gray-400 text-sm mb-4">Mario Kart-style multiplayer. Sincronización Photon, escenarios 3D optimizados, UI state flow y calibración en tiempo real.</p>
+            <div class="flex flex-wrap gap-2 text-xs mb-4">
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Unity 3D</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Photon PUN/Fusion</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">C#</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Blender</span>
+            </div>
+            <div class="text-sm text-fuchsia-300 font-semibold">60 FPS · &lt;100 ms latency</div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-900/50 card-hover">
+          <img src="https://placehold.co/800x450/0f172a/d946ef?text=ArtemisVision+WebGL" alt="ArtemisVision" class="w-full h-56 object-cover" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">ArtemisVision — WebGL & MR</h3>
+            <p class="text-gray-400 text-sm mb-4">Aplicaciones WebGL multiplayer y Mixed Reality. Showrooms 3D con controles orbitales 360°, multi-cámara dinámica y optimización de draw calls.</p>
+            <div class="flex flex-wrap gap-2 text-xs mb-4">
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Unity WebGL</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Web3</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">AWS</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">MR</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-900/50 card-hover">
+          <img src="https://placehold.co/800x450/0f172a/d946ef?text=Hape+Prime+Metaverse" alt="Hape Prime" class="w-full h-56 object-cover" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">Hape Prime — Metaverse 3D Store</h3>
+            <p class="text-gray-400 text-sm mb-4">Tiendas virtuales 3D high-fidelity integradas con Smart Contracts para transacciones NFT. Optimización de rendering para browser y VR.</p>
+            <div class="flex flex-wrap gap-2 text-xs mb-4">
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Unity 3D</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">WebGL</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Smart Contracts</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Web3</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-900/50 card-hover">
+          <img src="https://placehold.co/800x450/0f172a/d946ef?text=SENNOVA+AR/VR" alt="SENNOVA" class="w-full h-56 object-cover" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">SENNOVA — AR/VR Transportation</h3>
+            <p class="text-gray-400 text-sm mb-4">Simulaciones AR/VR para tecnologías de transporte. ARFoundation, Vuforia, integración con backend Laravel y despliegue AWS.</p>
+            <div class="flex flex-wrap gap-2 text-xs mb-4">
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">ARFoundation</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Vuforia</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Unity 3D</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">AWS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10 bg-gray-900/50 card-hover">
+          <img src="https://placehold.co/800x450/0f172a/d946ef?text=Quimicamente+Locos+AR" alt="Quimicamente Locos" class="w-full h-56 object-cover" />
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">Químicamente Locos — EdTech AR</h3>
+            <p class="text-gray-400 text-sm mb-4">Proyecto de investigación premiado: libros físicos con experiencias AR, 8 experimentos 3D modelados y animados en Blender, tracking Vuforia.</p>
+            <div class="flex flex-wrap gap-2 text-xs mb-4">
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Vuforia</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Blender</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">Unity 3D</span>
+              <span class="px-2 py-1 rounded bg-fuchsia-500/10 text-fuchsia-300">EdTech</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-gray-900/40 p-8">
+        <h3 class="text-2xl font-bold mb-6">Stack XR / Unity</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div class="p-3 rounded bg-white/5">Unity 3D / C#</div>
+          <div class="p-3 rounded bg-white/5">XR Interaction Toolkit</div>
+          <div class="p-3 rounded bg-white/5">Oculus / Meta Quest</div>
+          <div class="p-3 rounded bg-white/5">ARFoundation / Vuforia</div>
+          <div class="p-3 rounded bg-white/5">Photon PUN/Fusion</div>
+          <div class="p-3 rounded bg-white/5">WebGL / WebXR</div>
+          <div class="p-3 rounded bg-white/5">Blender (3D/animation)</div>
+          <div class="p-3 rounded bg-white/5">Post-Processing Stack</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB: WORDPRESS -->
+  <section id="tab-wordpress" class="tab-content hidden">
+    <div class="max-w-6xl mx-auto px-6 py-16">
+      <div class="mb-12">
+        <p class="text-emerald-400 text-sm uppercase tracking-widest mb-2">Perfil 03</p>
+        <h2 class="text-4xl font-extrabold mb-4">WordPress Full-Stack</h2>
+        <p class="text-gray-400 max-w-3xl">
+          Automatización, membresías, suscripciones, dashboards y herramientas a medida dentro de WordPress. Todo lo que ya tienes en staging, preservado.
+        </p>
+      </div>
+
+      <div class="space-y-12">
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="text-6xl font-black section-number">01</div>
+          <div>
+            <h3 class="text-2xl font-bold mb-2">Membresías</h3>
+            <p class="text-gray-400 mb-3">Protejo contenido premium, evito fugas de acceso y reduzco tickets de soporte eliminando plugins caros.</p>
+            <div class="flex gap-6 text-sm">
+              <div><span class="text-emerald-400 font-bold text-xl">−40%</span><br><span class="text-gray-500">0 fugas de acceso</span></div>
+              <div><span class="text-emerald-400 font-bold text-xl">↓</span><br><span class="text-gray-500">menos tickets de soporte</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="text-6xl font-black section-number">02</div>
+          <div>
+            <h3 class="text-2xl font-bold mb-2">Suscripciones</h3>
+            <p class="text-gray-400 mb-3">Dunning automático, revocación y reactivación de pagos fallidos.</p>
+            <div class="flex gap-6 text-sm">
+              <div><span class="text-emerald-400 font-bold text-xl">+$13.9k</span><br><span class="text-gray-500">+18% pagos fallidos recuperados en 6 meses</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="text-6xl font-black section-number">03</div>
+          <div>
+            <h3 class="text-2xl font-bold mb-2">Automatización</h3>
+            <p class="text-gray-400 mb-3">IA + Google Sheets que generan evento, ticket y Zoom automáticamente.</p>
+            <div class="flex gap-6 text-sm">
+              <div><span class="text-emerald-400 font-bold text-xl">−92%</span><br><span class="text-gray-500">tiempo operativo por evento</span></div>
+              <div><span class="text-gray-500">Antes 60 min → Después 5 min</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="text-6xl font-black section-number">04</div>
+          <div>
+            <h3 class="text-2xl font-bold mb-2">Integraciones</h3>
+            <p class="text-gray-400 mb-3">Bots de WhatsApp y workflows n8n que responden y hacen seguimiento 24/7.</p>
+            <div class="flex gap-6 text-sm">
+              <div><span class="text-emerald-400 font-bold text-xl">+1,200</span><br><span class="text-gray-500">conversaciones automatizadas/mes</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="text-6xl font-black section-number">05</div>
+          <div>
+            <h3 class="text-2xl font-bold mb-2">Dashboards</h3>
+            <p class="text-gray-400 mb-3">MRR, ARR y churn en tiempo real para actuar antes de que sea tarde.</p>
+            <div class="flex gap-6 text-sm">
+              <div><span class="text-emerald-400 font-bold text-xl">+$21.6k</span><br><span class="text-gray-500">MRR en 12 meses · churn 6.8% → 5.3%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="text-6xl font-black section-number">06</div>
+          <div>
+            <h3 class="text-2xl font-bold mb-2">Herramientas a medida</h3>
+            <p class="text-gray-400 mb-3">Reemplazo licencias de terceros por módulos propios dentro de WordPress.</p>
+            <div class="flex gap-6 text-sm">
+              <div><span class="text-emerald-400 font-bold text-xl">4</span><br><span class="text-gray-500">licencias reemplazadas · ahorro recurrente</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-white/10 pt-12">
+          <h3 class="text-2xl font-bold mb-6">07 · Portafolio Web en vivo</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="rounded-xl border border-white/10 bg-gray-900/50 p-5 card-hover">
+              <h4 class="font-bold mb-1">buscadorpro.mapa</h4>
+              <p class="text-gray-400 text-sm">ZIP Finder con geolocalización.</p>
+            </div>
+            <div class="rounded-xl border border-white/10 bg-gray-900/50 p-5 card-hover">
+              <h4 class="font-bold mb-1">zoom.tv</h4>
+              <p class="text-gray-400 text-sm">Live Events Grid con estados en vivo.</p>
+            </div>
+            <div class="rounded-xl border border-white/10 bg-gray-900/50 p-5 card-hover">
+              <h4 class="font-bold mb-1">snippet-manager</h4>
+              <p class="text-gray-400 text-sm">MRR dashboard con sync de snippets.</p>
+            </div>
+            <div class="rounded-xl border border-white/10 bg-gray-900/50 p-5 card-hover">
+              <h4 class="font-bold mb-1">membership.landing</h4>
+              <p class="text-gray-400 text-sm">Checkout de membresía VIP.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 text-center border-t border-white/10">
+    <h2 class="text-3xl font-bold mb-4">Hablemos y automatizamos tu negocio</h2>
+    <p class="text-gray-400 mb-8">Disponible para roles remotos full-time o proyectos internacionales.</p>
+    <a href="mailto:andresleonardogomez@gmail.com" class="inline-block px-8 py-3 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold transition">Contactar</a>
+    <p class="text-xs text-gray-600 mt-6">Cifras ilustrativas basadas en proyectos reales.</p>
+  </section>
+
+  <script>
+    // TABS
+    function showTab(id) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + id).classList.remove('hidden');
+      document.querySelectorAll('nav button').forEach(btn => {
+        btn.classList.remove('tab-active');
+        btn.classList.add('tab-inactive');
+      });
+      const activeBtn = document.getElementById('nav-' + id);
+      activeBtn.classList.remove('tab-inactive');
+      activeBtn.classList.add('tab-active');
+      document.getElementById('intro').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // THREE.JS HOLOGRAPHIC HERO
+    (function() {
+      const canvas = document.getElementById('xr-hero');
+      if (!canvas) return;
+
+      const scene = new THREE.Scene();
+      // transparente para que el fondo CSS negro se vea
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.z = 5;
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      // Toroides estilo Holcim
+      const geometry = new THREE.TorusGeometry(1.2, 0.08, 16, 100);
+      const material = new THREE.MeshBasicMaterial({
+        color: 0x06b6d4,
+        transparent: true,
+        opacity: 0.6,
+        wireframe: true
+      });
+      const torus1 = new THREE.Mesh(geometry, material);
+      const torus2 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0xd946ef, transparent: true, opacity: 0.5, wireframe: true }));
+      const torus3 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.35, wireframe: true }));
+
+      torus1.rotation.x = Math.PI / 2;
+      torus2.rotation.y = Math.PI / 3;
+      torus3.rotation.z = Math.PI / 4;
+
+      group.add(torus1, torus2, torus3);
+
+      // Esfera central translúcida
+      const sphereGeo = new THREE.SphereGeometry(0.9, 32, 32);
+      const sphereMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.12, wireframe: false });
+      const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+      group.add(sphere);
+
+      // Partículas flotantes
+      const particlesGeo = new THREE.BufferGeometry();
+      const particleCount = 120;
+      const pos = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount * 3; i++) {
+        pos[i] = (Math.random() - 0.5) * 10;
+      }
+      particlesGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const particlesMat = new THREE.PointsMaterial({ color: 0x06b6d4, size: 0.03, transparent: true, opacity: 0.7 });
+      const particles = new THREE.Points(particlesGeo, particlesMat);
+      scene.add(particles);
+
+      let mouseX = 0, mouseY = 0;
+      document.addEventListener('mousemove', e => {
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const t = Date.now() * 0.0004;
+        torus1.rotation.x += 0.003;
+        torus1.rotation.y += 0.005;
+        torus2.rotation.x -= 0.004;
+        torus2.rotation.y += 0.003;
+        torus3.rotation.x += 0.002;
+        torus3.rotation.z += 0.004;
+
+        group.rotation.y = t * 0.3 + mouseX * 0.2;
+        group.rotation.x = mouseY * 0.2;
+        particles.rotation.y = t * 0.1;
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    })();
+  </script>
+</body>
+</html>

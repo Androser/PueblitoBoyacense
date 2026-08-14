@@ -1,0 +1,382 @@
+<style>
+  :root {
+    --navy: #1a2b4c;
+    --coral: #ef6b60;
+    --gold: #f39c12;
+    --bg: #0f172a;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  a { color: var(--coral); text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    background: rgba(15,23,42,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; }
+  .logo { font-weight: 800; font-size: 1.1rem; }
+  .nav-links { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
+  .nav-links a { color: var(--muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .nav-links a:hover { color: var(--text); }
+  .mobile-menu { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 0 80px;
+    position: relative;
+    background: radial-gradient(ellipse at 50% 0%, rgba(239,107,96,0.12), transparent 55%),
+                radial-gradient(ellipse at 80% 90%, rgba(243,156,18,0.08), transparent 45%);
+  }
+  .hero h1 { font-size: clamp(2.4rem, 6vw, 4.8rem); line-height: 1.05; margin: 0 0 16px; font-weight: 800; }
+  .hero h1 span { color: var(--coral); }
+  .hero-sub { color: var(--muted); font-size: 1.15rem; max-width: 720px; margin: 0 auto 36px; }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 36px; }
+  .badge { padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); font-size: 0.78rem; color: var(--muted); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 8px; font-weight: 700; transition: transform .2s; }
+  .btn-primary { background: linear-gradient(90deg, var(--coral), var(--gold)); color: #fff; }
+  .btn-secondary { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: var(--text); }
+  .btn:hover { transform: translateY(-2px); }
+
+  /* SECTIONS */
+  section { padding: 90px 0; }
+  .section-head { text-align: center; margin-bottom: 56px; }
+  .section-head h2 { font-size: 2.4rem; margin: 0 0 12px; }
+  .section-head p { color: var(--muted); max-width: 650px; margin: 0 auto; }
+
+  /* CARDS */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 28px;
+    transition: all .25s ease;
+    cursor: pointer;
+  }
+  .card:hover { transform: translateY(-5px); border-color: rgba(239,107,96,0.35); background: rgba(255,255,255,0.06); }
+  .card .icon { font-size: 2rem; margin-bottom: 14px; }
+  .card h3 { margin: 0 0 8px; font-size: 1.25rem; }
+  .card p { color: var(--muted); font-size: 0.95rem; margin: 0; }
+
+  /* PROJECTS */
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 40px; }
+  .filter-btn {
+    padding: 8px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12);
+    background: transparent; color: var(--muted); font-size: 0.85rem; cursor: pointer; transition: .2s;
+  }
+  .filter-btn.active, .filter-btn:hover { background: var(--coral); color: #fff; border-color: var(--coral); }
+  .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+  .project {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px; overflow: hidden;
+    transition: .25s;
+  }
+  .project:hover { transform: translateY(-4px); border-color: rgba(239,107,96,0.3); }
+  .project img { width: 100%; height: 200px; object-fit: cover; background: #1e293b; }
+  .project-body { padding: 22px; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .project-tag { font-size: 0.7rem; padding: 4px 10px; border-radius: 999px; background: rgba(239,107,96,0.12); color: var(--coral); font-weight: 600; }
+  .project h4 { margin: 0 0 8px; font-size: 1.15rem; }
+  .project p { color: var(--muted); font-size: 0.9rem; margin: 0 0 14px; }
+  .metric { color: var(--gold); font-weight: 700; font-size: 0.9rem; }
+
+  /* SKILLS */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .skill {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px; border-radius: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  }
+  .skill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 8px var(--coral); }
+
+  /* SALARY BANNER */
+  .salary-banner {
+    background: linear-gradient(90deg, rgba(239,107,96,0.12), rgba(243,156,18,0.08));
+    border: 1px solid rgba(239,107,96,0.25);
+    border-radius: 18px; padding: 32px; text-align: center;
+  }
+  .salary-banner h3 { margin: 0 0 8px; font-size: 1.6rem; }
+  .salary-banner .range { font-size: 2.2rem; font-weight: 800; color: var(--coral); }
+
+  /* CTA */
+  .cta { text-align: center; padding: 80px 0; }
+  .cta h2 { font-size: 2.4rem; margin-bottom: 12px; }
+  .cta p { color: var(--muted); max-width: 560px; margin: 0 auto 28px; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid rgba(255,255,255,0.08); padding: 36px 0; text-align: center; color: var(--muted); font-size: 0.85rem; }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .mobile-menu { display: block; }
+    .hero h1 { font-size: 2.2rem; }
+    section { padding: 64px 0; }
+  }
+</style>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <div class="logo">Andrés Gómez</div>
+    <ul class="nav-links">
+      <li><a href="#perfiles">Perfiles</a></li>
+      <li><a href="#proyectos">Proyectos</a></li>
+      <li><a href="#habilidades">Habilidades</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <button class="mobile-menu" onclick="document.querySelector('.nav-links').classList.toggle('mobile-open')">☰</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-badges">
+      <span class="badge">🇨🇴 Colombia · Remote</span>
+      <span class="badge">C1/Native English</span>
+      <span class="badge">8+ años de experiencia</span>
+    </div>
+    <h1>Andrés Leonardo Gómez Gil<br><span>Full-Stack · Unity XR · WordPress</span></h1>
+    <p class="hero-sub">
+      Ingeniero de software bilingüe especializado en arquitecturas web escalables, simulaciones inmersivas VR/AR y automatización empresarial en WordPress.
+    </p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <a href="#proyectos" class="btn btn-primary">Ver portafolio</a>
+      <a href="https://www.linkedin.com/in/leonardo-g-024042128/" target="_blank" class="btn btn-secondary">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<section id="perfiles">
+  <div class="container">
+    <div class="section-head">
+      <h2>¿Qué estás buscando?</h2>
+      <p>Tres perfiles complementarios, un mismo estándar de entrega internacional.</p>
+    </div>
+    <div class="cards">
+      <div class="card" onclick="filterProjects('wordpress')">
+        <div class="icon">🚀</div>
+        <h3>WordPress Full-Stack</h3>
+        <p>Memberships, suscripciones, automatización, dashboards y herramientas a medida que reemplazan licencias de terceros.</p>
+      </div>
+      <div class="card" onclick="filterProjects('fullstack')">
+        <div class="icon">🖥️</div>
+        <h3>Full-Stack Developer</h3>
+        <p>Backend PHP/Laravel, AWS, APIs REST, Web3, Flutter y bases de datos para aplicaciones Unity, WebGL y móviles.</p>
+      </div>
+      <div class="card" onclick="filterProjects('unity')">
+        <div class="icon">🥽</div>
+        <h3>Unity / XR Developer</h3>
+        <p>Simuladores VR industriales, experiencias multiplayer, WebGL/WebXR y optimización para Oculus Quest y móviles.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="proyectos" style="background:rgba(255,255,255,0.02);">
+  <div class="container">
+    <div class="section-head">
+      <h2>Portafolio técnico</h2>
+      <p>Proyectos reales con resultados medibles. Imágenes de prueba — se reemplazarán por las capturas reales.</p>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterProjects('all')">Todos</button>
+      <button class="filter-btn" onclick="filterProjects('wordpress')">WordPress</button>
+      <button class="filter-btn" onclick="filterProjects('fullstack')">Full-Stack</button>
+      <button class="filter-btn" onclick="filterProjects('unity')">Unity / XR</button>
+    </div>
+
+    <div class="projects" id="project-grid">
+      <!-- WORDPRESS -->
+      <div class="project" data-category="wordpress">
+        <img src="https://placehold.co/640x360/1a2b4c/ef6b60?text=VIP+Academy+Portal" alt="VIP Academy" />
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">WordPress</span><span class="project-tag">Memberships</span></div>
+          <h4>VIP Academy Portal</h4>
+          <p>Portal de cursos premium con verificación VIP multicapa, acceso restringido y UI responsive orientada a conversión.</p>
+          <div class="metric">0 fugas de acceso · −40% tickets</div>
+        </div>
+      </div>
+
+      <div class="project" data-category="wordpress">
+        <img src="https://placehold.co/640x360/1a2b4c/ef6b60?text=AI+Event+Creator" alt="AI Event Creator" />
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">WordPress</span><span class="project-tag">Gemini AI</span></div>
+          <h4>AI Event Creator</h4>
+          <p>Endpoint REST que recibe título y fecha, llama a Gemini AI y crea automáticamente eventos, tickets y salas Zoom.</p>
+          <div class="metric">−92% tiempo operativo por evento</div>
+        </div>
+      </div>
+
+      <div class="project" data-category="wordpress">
+        <img src="https://placehold.co/640x360/1a2b4c/ef6b60?text=WhatsApp+Bot+n8n" alt="WhatsApp Bot" />
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">WordPress</span><span class="project-tag">n8n</span></div>
+          <h4>WhatsApp Bot + Control Panel</h4>
+          <p>API REST propia, sincronización batch de teléfonos, scheduling WP Cron y panel de administración para bots.</p>
+          <div class="metric">+1,200 conversaciones/mes</div>
+        </div>
+      </div>
+
+      <!-- FULL-STACK -->
+      <div class="project" data-category="fullstack">
+        <img src="https://placehold.co/640x360/1a2b4c/f39c12?text=TOQEN+Neraverse" alt="Neraverse" />
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">PHP</span><span class="project-tag">MySQL</span><span class="project-tag">AWS</span></div>
+          <h4>Neraverse Legendary — Backend</h4>
+          <p>Backend PHP para multiplayer racing: rooms, autenticación, leaderboards, IAP y Photon PUN/Fusion.</p>
+          <div class="metric">60 FPS · &lt;100 ms latency</div>
+        </div>
+      </div>
+
+      <div class="project" data-category="fullstack">
+        <img src="https://placehold.co/640x360/1a2b4c/f39c12?text=ArtemisVision+Web3" alt="ArtemisVision" />
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">Web3</span><span class="project-tag">PHP</span><span class="project-tag">AWS</span></div>
+          <h4>ArtemisVision — Web3 Auth</h4>
+          <p>Backend PHP para autenticación Web3, integración Smart Contracts y despliegue S3/CloudFront.</p>
+          <div class="metric">Showrooms 3D + Web3 auth</div>
+        </div>
+      </div>
+
+      <div class="project" data-category="fullstack">
+        <img src="https://placehold.co/640x360/1a2b4c/f39c12?text=Zion+Hydro+Lab" alt="Zion Hydro Lab" />
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">Flutter</span><span class="project-tag">Supabase</span><span class="project-tag">IoT</span></div>
+          <h4>Zion Hydro Lab — AgriTech</h4>
+          <p>App Flutter + Supabase para cultivo hidropónico con sensores IoT y computer vision para diagnóstico vegetal.</p>
+          <div class="metric">AI agronomist + IoT sensors</div>
+        </div>
+      </div>
+
+      <!-- UNITY / XR -->
+      <div class="project" data-category="unity">
+        <img src="https://placehold.co/640x360/1a2b4c/06b6d4?text=Holcim+VR+Simulator" alt="Holcim" />
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">Unity</span><span class="project-tag">Oculus Quest</span><span class="project-tag">VR</span></div>
+          <h4>Holcim Virtual Training Simulator</h4>
+          <p>Simulador VR para planta industrial: tours 360°, hotspots, seguridad minera y trabajo en alturas.</p>
+          <div class="metric">−40% onboarding · 72–90 FPS</div>
+        </div>
+      </div>
+
+      <div class="project" data-category="unity">
+        <img src="https://placehold.co/640x360/1a2b4c/06b6d4?text=Hape+Prime+Metaverse" alt="Hape Prime" />
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">Unity</span><span class="project-tag">WebGL</span><span class="project-tag">Web3</span></div>
+          <h4>Hape Prime — Metaverse 3D Store</h4>
+          <p>Tiendas virtuales 3D high-fidelity integradas con Smart Contracts para transacciones NFT.</p>
+          <div class="metric">Real-time rendering browser/VR</div>
+        </div>
+      </div>
+
+      <div class="project" data-category="unity">
+        <img src="https://placehold.co/640x360/1a2b4c/06b6d4?text=Quimicamente+Locos+AR" alt="Quimicamente Locos" />
+        <div class="project-body">
+          <div class="project-tags"><span class="project-tag">Unity</span><span class="project-tag">Vuforia</span><span class="project-tag">Blender</span></div>
+          <h4>Químicamente Locos — EdTech AR</h4>
+          <p>Proyecto de investigación premiado: libros físicos con experiencias AR y 8 experimentos 3D.</p>
+          <div class="metric">3 libros · 8 experimentos 3D</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="habilidades">
+  <div class="container">
+    <div class="section-head">
+      <h2>Stack completo</h2>
+      <p>Habilidades técnicas validadas en producción para cada uno de los tres perfiles.</p>
+    </div>
+    <div class="skills-grid">
+      <div class="skill"><div class="skill-dot"></div><div>Unity 3D / C#</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>XR Interaction Toolkit / Oculus SDK</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>ARFoundation / Vuforia</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>Photon PUN/Fusion</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>WebGL / WebXR</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>Blender (3D / animation)</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>PHP / Laravel</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>JavaScript / Web3.js</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>Java REST APIs</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>MySQL / Database design</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>AWS S3 / CloudFront</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>Flutter / Dart</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>WordPress / WooCommerce</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>Memberships / Subscriptions</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>n8n / WhatsApp API / AI</div></div>
+      <div class="skill"><div class="skill-dot"></div><div>IoT / Smart Contracts / Git</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="salary-banner">
+      <h3>Rango salarial objetivo</h3>
+      <div class="range">$3,000 – $5,000 USD/mes</div>
+      <p style="color:var(--muted); margin:12px 0 0;">Full-time remoto · Contratos internacionales · Consultoría por proyecto.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contacto" class="cta">
+  <div class="container">
+    <h2>Hablemos de tu próximo proyecto</h2>
+    <p>Disponible para roles remotos, proyectos de simulación XR y consultoría de transformación digital.</p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <a href="mailto:andresleonardogomez@gmail.com" class="btn btn-primary">Enviar email</a>
+      <a href="https://wa.me/573027464103" target="_blank" class="btn btn-secondary">WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    © 2026 Andrés Leonardo Gómez Gil · Full-Stack · Unity XR · WordPress Developer.
+  </div>
+</footer>
+
+<script>
+  function filterProjects(category) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    document.querySelectorAll('.project').forEach(project => {
+      if (category === 'all' || project.dataset.category === category) {
+        project.style.display = 'block';
+      } else {
+        project.style.display = 'none';
+      }
+    });
+  }
+
+  // Smooth scroll para navegación
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
