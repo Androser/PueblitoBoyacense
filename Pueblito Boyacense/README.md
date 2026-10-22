@@ -4,10 +4,10 @@ Propuesta comercial interactiva para la administración del Pueblito Boyacense.
 
 ## Ver la propuesta
 
-Abre el archivo `propuesta_final_ecosistema_interactivo.html` en cualquier navegador.
+Abre el archivo `index.html` en cualquier navegador.
 
-Si activas GitHub Pages, la puedes ver en:
-`https://androser.github.io/PueblitoBoyacense/propuesta_final_ecosistema_interactivo.html`
+Si activas GitHub Pages o Vercel, la puedes ver en:
+`https://androser.github.io/PueblitoBoyacense`
 
 ## Chat con IA
 
