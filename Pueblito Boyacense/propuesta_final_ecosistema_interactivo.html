@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta Ecosistema Interactivo — Pueblito Boyacense</title>
+    <style>
+        :root {
+            --navy: #1a365d;
+            --navy-light: #2c5282;
+            --navy-dark: #102a43;
+            --slate: #475569;
+            --slate-light: #f8fafc;
+            --slate-border: #e2e8f0;
+            --gold: #c5a028;
+            --green: #2e7d32;
+            --green-light: #e8f5e9;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            --radius: 8px;
+            --radius-lg: 12px;
+            --max-width: 1000px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--slate);
+            background: var(--slate-light);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Progress bar */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--gold);
+            width: 0%;
+            z-index: 1001;
+            transition: width 0.1s;
+        }
+
+        /* Navigation */
+        #main-nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--slate-border);
+            z-index: 1000;
+            padding: 0.75rem 1rem;
+        }
+
+        #main-nav .nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        #main-nav .logo {
+            font-weight: 700;
+            color: var(--navy);
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        #main-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        #main-nav ul::-webkit-scrollbar { display: none; }
+
+        #main-nav a {
+            text-decoration: none;
+            color: var(--slate);
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.4rem 0.7rem;
+            border-radius: 999px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        #main-nav a:hover, #main-nav a.active {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            min-height: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            overflow: hidden;
+        }
+
+        .hero img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(16,42,67,0.88) 0%, rgba(26,54,93,0.78) 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: var(--max-width);
+            padding: 3rem 1.5rem;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-content p {
+            font-size: 1.15rem;
+            opacity: 0.92;
+            font-weight: 300;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--navy-dark);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            margin-bottom: 1rem;
+        }
+
+        /* Container */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem;
+        }
+
+        /* Cards & boxes */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--slate-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .highlight-box {
+            background: var(--green-light);
+            border-left: 4px solid var(--green);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid var(--navy-light);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #fffbeb;
+            border-left: 4px solid var(--gold);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            color: var(--navy);
+            line-height: 1.25;
+            font-weight: 700;
+        }
+
+        h1 { font-size: 2rem; margin: 0 0 1rem; }
+        h2 { font-size: 1.6rem; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--slate-border); }
+        h3 { font-size: 1.2rem; margin: 1.75rem 0 0.75rem; color: var(--navy-light); }
+        h4 { font-size: 1.05rem; margin: 1.25rem 0 0.5rem; }
+
+        p { margin-bottom: 1rem; }
+
+        ul, ol { margin-left: 1.25rem; margin-bottom: 1.25rem; }
+        li { margin-bottom: 0.4rem; }
+
+        a { color: var(--navy-light); }
+
+        strong { color: var(--navy); font-weight: 600; }
+
+        /* Executive summary */
+        .exec-summary {
+            background: var(--white);
+            border: 1px solid var(--slate-border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .exec-summary h2 {
+            margin-top: 0;
+            border-bottom: none;
+            font-size: 1.4rem;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .kpi {
+            text-align: center;
+            padding: 1rem;
+            background: var(--slate-light);
+            border-radius: var(--radius);
+        }
+
+        .kpi .number {
+            display: block;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        .kpi .label {
+            font-size: 0.8rem;
+            color: var(--slate);
+        }
+
+        /* TOC */
+        .toc {
+            background: var(--white);
+            border: 1px solid var(--slate-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .toc h3 { margin-top: 0; }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .toc a {
+            display: block;
+            text-decoration: none;
+            color: var(--slate);
+            padding: 0.35rem 0.5rem;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .toc a:hover {
+            background: var(--slate-light);
+            color: var(--navy);
+        }
+
+        /* Section */
+        section { margin-bottom: 2rem; }
+
+        /* Accordions */
+        .accordion {
+            border: 1px solid var(--slate-border);
+            border-radius: var(--radius);
+            margin-bottom: 0.75rem;
+            background: var(--white);
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--navy);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .accordion-header:hover { background: var(--slate-light); }
+
+        .accordion-header .icon {
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+            color: var(--gold);
+        }
+
+        .accordion.open .accordion-header .icon { transform: rotate(180deg); }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion.open .accordion-body {
+            max-height: 2000px;
+        }
+
+        .accordion-content {
+            padding: 0 1.25rem 1.25rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            border: 1px solid var(--slate-border);
+            border-radius: var(--radius-lg);
+            background: var(--white);
+            overflow: hidden;
+        }
+
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid var(--slate-border);
+            background: var(--slate-light);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.9rem 1rem;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: var(--slate);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--navy);
+            background: var(--white);
+            border-bottom-color: var(--gold);
+        }
+
+        .tab-panel {
+            display: none;
+            padding: 1.5rem;
+        }
+
+        .tab-panel.active { display: block; }
+
+        /* Tables */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            border: 1px solid var(--slate-border);
+            border-radius: var(--radius);
+            background: var(--white);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--slate-border);
+        }
+
+        th {
+            background: var(--navy);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background: var(--slate-light); }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-admin { background: #dbeafe; color: #1e40af; }
+        .badge-commerce { background: #dcfce7; color: #166534; }
+        .badge-high { background: #fee2e2; color: #991b1b; }
+        .badge-medium { background: #fef3c7; color: #92400e; }
+        .badge-low { background: #e2e8f0; color: #475569; }
+        .badge-included { background: var(--green-light); color: var(--green); }
+        .badge-notincluded { background: #fee2e2; color: #991b1b; }
+
+        /* Price cards */
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .price-card {
+            background: var(--white);
+            border: 1px solid var(--slate-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .price-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .price-card.featured {
+            border-color: var(--gold);
+            border-width: 2px;
+            position: relative;
+        }
+
+        .price-card.featured::before {
+            content: 'RECOMENDADO';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold);
+            color: var(--navy-dark);
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 0.2rem 0.7rem;
+            border-radius: 999px;
+        }
+
+        .price-card h4 {
+            color: var(--navy);
+            margin-top: 0;
+            font-size: 0.95rem;
+        }
+
+        .price-card .amount {
+            display: block;
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: var(--navy);
+            margin: 0.5rem 0;
+        }
+
+        .price-card .note {
+            font-size: 0.85rem;
+            color: var(--slate);
+        }
+
+        /* Images */
+        figure {
+            margin: 1.5rem 0;
+        }
+
+        figure img {
+            width: 100%;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        figcaption {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--slate);
+            margin-top: 0.5rem;
+        }
+
+        .img-vertical {
+            max-width: 320px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        /* Argument cards */
+        .argument-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .argument-card {
+            background: var(--white);
+            border: 1px solid var(--slate-border);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .argument-card .arg-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .argument-card h4 { margin-top: 0; font-size: 0.95rem; }
+        .argument-card p { font-size: 0.9rem; margin-bottom: 0; }
+
+        /* Steps */
+        .steps {
+            display: grid;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .step {
+            display: flex;
+            gap: 1rem;
+            background: var(--white);
+            border: 1px solid var(--slate-border);
+            border-radius: var(--radius);
+            padding: 1rem;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 2rem;
+            height: 2rem;
+            background: var(--navy);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* FAQ */
+        .faq-list { margin: 1.5rem 0; }
+
+        /* CTA */
+        .cta-section {
+            background: var(--navy);
+            color: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .cta-section h2 {
+            color: var(--white);
+            border-bottom: none;
+            margin-top: 0;
+        }
+
+        .cta-section p { opacity: 0.9; }
+
+        .btn {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--navy-dark);
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+
+        .btn:hover { background: #b8941f; }
+
+        /* Footer */
+        footer {
+            background: var(--navy-dark);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 2rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Back to top */
+        #back-to-top {
+            position: fixed;
+            bottom: 90px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            background: var(--navy);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 998;
+            font-size: 1.2rem;
+        }
+
+        #back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Print */
+        @media print {
+            #main-nav, #chat-widget, #back-to-top, #progress-bar { display: none !important; }
+            .accordion-body { max-height: none !important; }
+            .tab-panel { display: block !important; }
+            body { background: white; }
+            .container { padding: 1rem; }
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 1rem 0.75rem 3rem; }
+            .card-grid, .price-grid, .argument-grid { grid-template-columns: 1fr; }
+            .tab-buttons { flex-direction: column; }
+            .toc-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="main-nav">
+    <div class="nav-inner">
+        <div class="logo">Pueblito Boyacense</div>
+        <ul>
+            <li><a href="#resumen" class="active">Resumen</a></li>
+            <li><a href="#supersona">Supersona</a></li>
+            <li><a href="#verificacion">Requisitos</a></li>
+            <li><a href="#plan">Inversión</a></li>
+            <li><a href="#metodologia">Metodología</a></li>
+            <li><a href="#incluye">Incluye</a></li>
+            <li><a href="#garantias">Soporte</a></li>
+            <li><a href="#riesgos">Riesgos</a></li>
+            <li><a href="#pasos">Pasos</a></li>
+        </ul>
+    </div>
+</nav>
+
+<header class="hero">
+    <img src="ImagenesGemini/hero_portada_propuesta.jpg" alt="Ecosistema Interactivo Pueblito Boyacense">
+    <div class="hero-content">
+        <span class="hero-badge">Propuesta Comercial</span>
+        <h1>Ecosistema Interactivo</h1>
+        <p>Transformación digital para el Pueblito Boyacense · Concejo de Administración</p>
+    </div>
+</header>
+
+<main class="container">
+
+    <header style="text-align:center; margin-bottom: 2rem;">
+        <p style="color: var(--slate); font-size: 0.95rem;">
+            <strong>Cliente:</strong> Administración Pueblito Boyacense — Sergio / Evelyn<br>
+            <strong>Preparado por:</strong> Equipo de Desarrollo & Estrategia Digital<br>
+            <strong>Versión:</strong> Propuesta Interactiva v2
+        </p>
+    </header>
+
+    <section id="resumen" class="exec-summary">
+        <h2>Resumen ejecutivo</h2>
+        <p>Esta propuesta concentra tres puntos de alto impacto en un solo plan de arranque: un <strong>catálogo digital de servicios</strong> para los comercios, un <strong>chatbot omnicanal con IA</strong> para atender visitantes 24/7, y la integración de <strong>Supersona</strong> como guía cultural digital. No reemplaza el proyecto completo: es la forma más rápida de generar valor tangible y dejar abierta la puerta al modelo de 4 pilares.</p>
+
+        <div class="kpi-grid">
+            <div class="kpi"><span class="number">$1.5M</span><span class="label">Setup en 2 pagos</span></div>
+            <div class="kpi"><span class="number">$580k</span><span class="label">Mensual primer año</span></div>
+            <div class="kpi"><span class="number">$130k</span><span class="label">Costos base mes 13+</span></div>
+            <div class="kpi"><span class="number">2-4</span><span class="label">Semanas de entrega</span></div>
+        </div>
+
+        <div class="highlight-box" style="margin-bottom:0;">
+            <strong>Condición clave:</strong> el primer pago de $750.000 se cancela junto con la entrega completa de materiales. Sin materiales no se inicia el desarrollo.
+        </div>
+    </section>
+
+    <nav class="toc">
+        <h3>Contenido de la propuesta</h3>
+        <div class="toc-grid">
+            <a href="#proposito">1. Propósito del ajuste</a>
+            <a href="#supersona">2. Supersona: guía digital</a>
+            <a href="#verificacion">3. Requisitos previos</a>
+            <a href="#plan">4. Inversión y condiciones</a>
+            <a href="#metodologia">5. Metodología de trabajo</a>
+            <a href="#incluye">6. Qué incluye</a>
+            <a href="#no-incluye">7. Qué NO incluye</a>
+            <a href="#garantias">8. Garantías y soporte</a>
+            <a href="#financiacion">9. Financiación con comercios</a>
+            <a href="#tiempo">10. Tiempo de entrega</a>
+            <a href="#argumento">11. Argumento para Sergio</a>
+            <a href="#escalamiento">12. Escalamiento futuro</a>
+            <a href="#riesgos">13. Riesgos y gestión</a>
+            <a href="#pasos">14. Próximos pasos</a>
+        </div>
+    </nav>
+
+    <section id="proposito">
+        <h2>1. Propósito de este ajuste</h2>
+        <p>Esta oferta nace de la solicitud de hacer la propuesta más accesible para el Pueblito Boyacense, sin perder el valor estratégico del proyecto original.</p>
+        <p>Hemos diseñado un <strong>plan de arranque único</strong> que concentra tres puntos de alto impacto: un catálogo interactivo de servicios para los comercios, atención automatizada 24/7 acompañada por Supersona, y conexión con redes sociales para captar tráfico.</p>
+        <div class="info-box">
+            <strong>Este no reemplaza el proyecto completo.</strong> Es la forma más rápida de empezar a generar valor tangible para comerciantes y visitantes, dejando abierta la puerta al modelo de 4 pilares cuando la administración lo considere oportuno.
+        </div>
+    </section>
+
+    <section id="supersona">
+        <h2>2. Supersona: el guía digital del Pueblito Boyacense</h2>
+        <p>Integramos a <strong>Supersona</strong>, el héroe que defiende nuestras raíces, como el rostro y la voz del ecosistema digital del Pueblito Boyacense.</p>
+
+        <div class="card-grid">
+            <div class="card" style="text-align:center;">
+                <img src="ImagenesGemini/muneco_supersona_original.png" alt="Muñeco oficial Supersona" class="img-vertical" style="margin: 0 auto 1rem;">
+                <figcaption style="margin:0;">Muñeco oficial — base para avatares digitales</figcaption>
+            </div>
+            <div class="card">
+                <h3>¿Cómo participa?</h3>
+                <p>Supersona es el embajador digital y guía cultural. <strong>No responde mensajes automáticos</strong> (eso lo hace el chatbot con IA), pero da la bienvenida, recomienda servicios y comparte tips culturales dentro del catálogo, el chatbot y las redes sociales.</p>
+                <ul style="margin-bottom:0;">
+                    <li>Guía del catálogo digital</li>
+                    <li>Voz institucional cercana</li>
+                    <li>Historias de los 7 pueblos</li>
+                    <li>Fidelización y eventos</li>
+                </ul>
+            </div>
+        </div>
+
+        <figure>
+            <img src="ImagenesGemini/arquitectura_ecosistema.png" alt="Arquitectura del Ecosistema Interactivo">
+            <figcaption>Arquitectura del Ecosistema Interactivo — todos los componentes conectados con Pueblito Boyacense.</figcaption>
+        </figure>
+
+        <h3>Materiales necesarios para integrar a Supersona</h3>
+        <ul>
+            <li>Imágenes oficiales del personaje en alta resolución.</li>
+            <li>Guía de uso de la marca (colores, tipografías, frases permitidas).</li>
+            <li>Historias o datos curiosos que Supersona pueda compartir con los visitantes.</li>
+            <li>Aprobación de la administración para usar la imagen del personaje en el chatbot, el catálogo y las redes sociales.</li>
+        </ul>
+        <div class="highlight-box">
+            <strong>Nota:</strong> si no se cuenta con material gráfico suficiente, podemos trabajar con la fotografía del muñeco y la caja oficial para crear los avatares digitales.
+        </div>
+    </section>
+
+    <section id="verificacion">
+        <h2>3. Requisitos previos al contrato</h2>
+        <p>Antes de firmar e iniciar, debemos completar dos bloques de requisitos. Haga clic en cada categoría para ver el detalle.</p>
+
+        <div class="accordion open">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+                <span>1. Antes de firmar</span>
+                <span class="icon">▼</span>
+            </button>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <div class="table-wrap">
+                        <table>
+                            <tr><th>#</th><th>Requerimiento</th><th>Responsable</th></tr>
+                            <tr><td>1</td><td>Fanpage de Facebook activa del Pueblito Boyacense</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>2</td><td>Cuenta de Instagram Business vinculada a Facebook</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>3</td><td>Cuenta de WhatsApp Business del Pueblito</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>4</td><td>Cuenta de YouTube oficial (para integración)</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>5</td><td>Acceso administrativo a Meta Business Suite</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>6</td><td>Dominio web activo (pueblitoboyacense.org)</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>7</td><td>NIT o documento de identidad de la administración</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>8</td><td>Correo institucional activo (@pueblitoboyacense.org)</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>9</td><td>Logo oficial, marca Supersona y autorizaciones de uso</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>10</td><td>Autorización escrita de cada comercio para usar sus datos, fotos y videos</td><td><span class="badge badge-commerce">Comercios</span></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+                <span>2. Antes de iniciar desarrollo</span>
+                <span class="icon">▼</span>
+            </button>
+            <div class="accordion-body">
+                <div class="accordion-content">
+                    <div class="table-wrap">
+                        <table>
+                            <tr><th>#</th><th>Requerimiento</th><th>Responsable</th></tr>
+                            <tr><td>11</td><td>Listado de comercios que participarán en la primera fase</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>12</td><td>Nombre, categoría y descripción de cada servicio</td><td><span class="badge badge-commerce">Comercios</span></td></tr>
+                            <tr><td>13</td><td>Precios actualizados de cada servicio o experiencia</td><td><span class="badge badge-commerce">Comercios</span></td></tr>
+                            <tr><td>14</td><td>Fotos de cada servicio (mínimo 2 por servicio)</td><td><span class="badge badge-commerce">Comercios</span></td></tr>
+                            <tr><td>15</td><td>Videos cortos de 15–30 segundos por servicio (deseable)</td><td><span class="badge badge-commerce">Comercios</span></td></tr>
+                            <tr><td>16</td><td>Número de WhatsApp de cada comercio</td><td><span class="badge badge-commerce">Comercios</span></td></tr>
+                            <tr><td>17</td><td>Horarios, ubicación dentro del complejo y datos de contacto</td><td><span class="badge badge-commerce">Comercios</span></td></tr>
+                            <tr><td>18</td><td>Preguntas frecuentes de cada comercio para entrenar la IA</td><td><span class="badge badge-commerce">Comercios</span></td></tr>
+                            <tr><td>19</td><td>Gestor digital designado por el Pueblito (recibe capacitación)</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>20</td><td>Persona de contacto para decisiones rápidas durante el desarrollo</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                            <tr><td>21</td><td>Persona encargada de aprobar textos, precios y contenido publicado</td><td><span class="badge badge-admin">Administración</span></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <strong>Importante:</strong> esta lista se debe completar antes del inicio del desarrollo. Lo que no se entregue a tiempo puede retrasar la entrega o dejar servicios fuera de la primera versión.
+        </div>
+    </section>
+
+    <section id="plan">
+        <h2>4. Plan recomendado e inversión</h2>
+
+        <h3>4.1 Inversión y condiciones comerciales</h3>
+        <div class="price-grid">
+            <div class="price-card">
+                <h4>Setup inicial</h4>
+                <span class="amount">$1.500.000</span>
+                <p class="note">Pago único en 2 cuotas de $750.000</p>
+            </div>
+            <div class="price-card featured">
+                <h4>Mensualidad primer año</h4>
+                <span class="amount">$580.000</span>
+                <p class="note">$130.000 costos fijos + $450.000 soporte</p>
+            </div>
+            <div class="price-card">
+                <h4>A partir del mes 13</h4>
+                <span class="amount">$130.000</span>
+                <p class="note">Solo costos fijos base, sin soporte activo</p>
+            </div>
+            <div class="price-card">
+                <h4>Recontratación</h4>
+                <span class="amount">A convenir</span>
+                <p class="note">Soporte y mantenimiento tras el primer año</p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>Forma de pago:</strong>
+            <ul style="margin:0.5rem 0 0 1.25rem;">
+                <li>Setup: <strong>$750.000 al firmar</strong>, junto con la entrega de materiales; <strong>$750.000 a la entrega operativa</strong>.</li>
+                <li>Mensualidad: $580.000 pagados al inicio de cada mes, durante los primeros 12 meses.</li>
+                <li>A partir del mes 13: $130.000 pagados al inicio de cada mes.</li>
+            </ul>
+        </div>
+
+        <div class="highlight-box">
+            <strong>Condición importante:</strong> la primera parte del setup ($750.000) se cancela junto con la entrega completa de los materiales y contenidos requeridos por parte del Pueblito y los comercios participantes. Sin materiales no se inicia el desarrollo.
+        </div>
+
+        <figure>
+            <img src="ImagenesGemini/linea_tiempo_pagos_gemini.png" alt="Línea de tiempo de pagos">
+            <figcaption>Línea de tiempo de pagos — Setup en 2 cuotas + 12 mensualidades + costos base.</figcaption>
+        </figure>
+
+        <figure>
+            <img src="ImagenesGemini/evolucion_costos_gemini.png" alt="Evolución del costo mensual">
+            <figcaption>Evolución del costo mensual — Después del primer año el costo baja a $130.000/mes.</figcaption>
+        </figure>
+
+        <h3>4.2 Desglose de la mensualidad</h3>
+        <div class="card-grid">
+            <div class="card" style="text-align:center;">
+                <h4 style="color:var(--navy-light);">Costos fijos base</h4>
+                <span style="font-size:1.8rem;font-weight:800;color:var(--navy);display:block;margin:0.5rem 0;">$130.000</span>
+                <p style="font-size:0.9rem;margin-bottom:0;">Servidor, dominio, tokens de IA, mensajería, licencias y almacenamiento. Gastos que van directamente a terceros.</p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <h4 style="color:var(--navy-light);">Mantenimiento y soporte</h4>
+                <span style="font-size:1.8rem;font-weight:800;color:var(--navy);display:block;margin:0.5rem 0;">$450.000</span>
+                <p style="font-size:0.9rem;margin-bottom:0;">Soporte técnico, ajustes del bot, actualizaciones, capacitaciones, reportes, atención de caídas y seguridad.</p>
+            </div>
+        </div>
+
+        <div class="info-box">
+            El valor de $450.000 por mantenimiento y soporte es significativamente menor al costo de contratar una persona a medio tiempo para esta función, y garantiza respaldo técnico especializado 24/7.
+        </div>
+
+        <figure>
+            <img src="ImagenesGemini/division_mensual_gemini.png" alt="División mensual">
+            <figcaption>División de la mensualidad — 22% costos fijos, 78% mantenimiento y soporte.</figcaption>
+        </figure>
+
+        <figure>
+            <img src="ImagenesGemini/resumen_inversion_gemini.png" alt="Resumen de inversión total primer año">
+            <figcaption>Resumen de inversión total — Primer año: $8.460.000.</figcaption>
+        </figure>
+    </section>
+
+    <section id="metodologia">
+        <h2>5. Metodología de trabajo</h2>
+
+        <h3>5.1 Reuniones semanales de desarrollo</h3>
+        <p>Durante las primeras 4 a 6 semanas del proyecto se realizarán <strong>reuniones semanales de avance</strong> con el equipo del Pueblito.</p>
+        <ul>
+            <li><strong>Día y hora:</strong> a convenir (recomendado: 1 hora por semana).</li>
+            <li><strong>Objetivo:</strong> revisar avances, resolver dudas, aprobar contenidos y ajustar prioridades.</li>
+            <li><strong>Entregables por reunión:</strong> reporte de avance, próximas tareas y decisiones pendientes.</li>
+        </ul>
+
+        <figure>
+            <img src="ImagenesGemini/linea_tiempo_desarrollo_gemini.png" alt="Línea de tiempo de desarrollo">
+            <figcaption>Línea de tiempo de desarrollo — 4 semanas desde la firma hasta la entrega operativa.</figcaption>
+        </figure>
+
+        <h3>5.2 Control del proyecto en Google Sheets</h3>
+        <p>Toda la gestión quedará en <strong>Google Sheets</strong>, para que cualquier persona del equipo del Pueblito pueda administrarla sin conocimientos técnicos avanzados.</p>
+
+        <div class="card-grid">
+            <div class="card">
+                <h4>Contenido</h4>
+                <ul style="margin-bottom:0;">
+                    <li>Catálogo de servicios</li>
+                    <li>Eventos</li>
+                    <li>Ofertas</li>
+                    <li>Preguntas frecuentes</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Operación</h4>
+                <ul style="margin-bottom:0;">
+                    <li>Conversaciones del bot</li>
+                    <li>Calendario de contenido</li>
+                    <li>Seguimiento de tareas</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Métricas</h4>
+                <ul style="margin-bottom:0;">
+                    <li>QR escaneados</li>
+                    <li>Conversaciones atendidas</li>
+                    <li>Servicios más vistos</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <strong>Beneficio:</strong> al finalizar el proyecto, el Pueblito tendrá un sistema de control sencillo que cualquier persona del equipo puede administrar.
+        </div>
+    </section>
+
+    <section id="incluye">
+        <h2>6. Qué incluye exactamente</h2>
+
+        <div class="tabs">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="openTab(this, 'tab-catalogo')">Catálogo digital</button>
+                <button class="tab-btn" onclick="openTab(this, 'tab-panel')">Panel admin</button>
+                <button class="tab-btn" onclick="openTab(this, 'tab-chatbot')">Chatbot IA</button>
+                <button class="tab-btn" onclick="openTab(this, 'tab-redes')">Redes sociales</button>
+            </div>
+
+            <div id="tab-catalogo" class="tab-panel active">
+                <p>Adaptamos la experiencia del menú digital Reels, pero en lugar de comidas mostramos <strong>servicios y experiencias del Pueblito Boyacense</strong>.</p>
+                <ul>
+                    <li>Nombre y categoría: hospedaje, restaurante, cafetería, artesanía, SPA, tour, evento, capilla, etc.</li>
+                    <li>Descripción corta, precio actualizado y ofertas por día/horario.</li>
+                    <li>Fotos y videos cortos en carrusel tipo Reels.</li>
+                    <li>Tags: Familiar, Romántico, Artesanal, Gastronomía, Bienestar, etc.</li>
+                    <li>Botón de WhatsApp directo y de llamada al comercio.</li>
+                    <li>Likes, comentarios y guardados por parte de los visitantes.</li>
+                    <li>Código QR personalizado por comercio o por manzana.</li>
+                    <li>Bienvenida de Supersona al ingresar al catálogo.</li>
+                    <li>Hosting dentro de la web del Pueblito o en subdominio propio.</li>
+                </ul>
+                <div class="warning-box" style="margin-bottom:0;">
+                    <strong>Materiales requeridos:</strong> los comercios deben entregar fotos, videos cortos, descripciones, precios actualizados, logos, horarios y datos de contacto. No incluye sesión de fotografía ni producción de video.
+                </div>
+            </div>
+
+            <div id="tab-panel" class="tab-panel">
+                <p>Panel de administración protegido con <strong>usuario y contraseña</strong>, para que el gestor digital actualice contenido sin depender de nosotros.</p>
+                <div class="card-grid">
+                    <div class="card">
+                        <h4>Servicios</h4>
+                        <p style="font-size:0.9rem;margin-bottom:0;">Crear, editar, activar o pausar servicios; cambiar precios y ofertas; gestionar fotos, videos y descripciones.</p>
+                    </div>
+                    <div class="card">
+                        <h4>Interacción</h4>
+                        <p style="font-size:0.9rem;margin-bottom:0;">Revisar comentarios, likes, guardados y métricas de cada servicio.</p>
+                    </div>
+                    <div class="card">
+                        <h4>Usuarios y QR</h4>
+                        <p style="font-size:0.9rem;margin-bottom:0;">Crear cuentas con permisos limitados y descargar códigos QR actualizados.</p>
+                    </div>
+                </div>
+                <p style="margin-bottom:0;">Incluye capacitación inicial para que el Pueblito pueda operar el servicio de forma autónoma.</p>
+            </div>
+
+            <div id="tab-chatbot" class="tab-panel">
+                <p>Un solo asistente virtual con IA atenderá <strong>WhatsApp, Instagram y Facebook</strong> desde un solo punto.</p>
+                <ul>
+                    <li>Respuestas automáticas 24/7 para consultas frecuentes.</li>
+                    <li>Escalamiento a atención humana cuando el bot no resuelva.</li>
+                    <li>Entrenamiento inicial con información de los comercios participantes.</li>
+                    <li>Panel de conversaciones y estadísticas básicas.</li>
+                    <li>Supersona como acompañante cultural (bienvenidas y tips).</li>
+                </ul>
+
+                <div class="accordion">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>Detalles técnicos: audios en WhatsApp</span>
+                        <span class="icon">▼</span>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <p>La API de WhatsApp Business <strong>sí permite enviar y recibir audios</strong>. Sin embargo, en este plan el bot responderá principalmente por texto. Los audios se pueden incluir como complemento en mensajes de bienvenida o tips de Supersona. Si en el futuro se requiere respuesta masiva por voz, se evaluará el impacto en costos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>Límite de uso de la IA</span>
+                        <span class="icon">▼</span>
+                    </button>
+                    <div class="accordion-body">
+                        <div class="accordion-content">
+                            <ul style="margin-bottom:0;">
+                                <li><strong>Límite:</strong> 20 intercambios de mensajes por usuario al día.</li>
+                                <li>Cuando el usuario se acerca al límite, el bot informa que transferirá la conversación.</li>
+                                <li>Si el bot no puede resolver, envía <strong>hasta 3 mensajes automáticos</strong> aclarando que escala a una persona.</li>
+                                <li>Al tercer mensaje, transfiere al WhatsApp de atención humana del Pueblito.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <figure style="margin-bottom:0;">
+                    <img src="ImagenesGemini/flujo_chatbot_gemini.png" alt="Flujo de atención del chatbot">
+                    <figcaption>Flujo de atención del chatbot — Usuario → Bot IA → Escalamiento → Persona real.</figcaption>
+                </figure>
+            </div>
+
+            <div id="tab-redes" class="tab-panel">
+                <div class="card-grid">
+                    <div class="card">
+                        <h4>YouTube</h4>
+                        <p style="font-size:0.9rem;margin-bottom:0;">Respuesta automática a comentarios con llamados a la acción hacia WhatsApp o el catálogo.</p>
+                    </div>
+                    <div class="card">
+                        <h4>Instagram y Facebook</h4>
+                        <p style="font-size:0.9rem;margin-bottom:0;">Respuestas automáticas a comentarios y mensajes directos mediante el chatbot omnicanal.</p>
+                    </div>
+                    <div class="card">
+                        <h4>TikTok</h4>
+                        <p style="font-size:0.9rem;margin-bottom:0;"><strong>No incluye respuesta automática.</strong> Se entregan plantillas optimizadas para que el equipo responda manualmente.</p>
+                    </div>
+                </div>
+                <p style="margin-bottom:0;margin-top:1rem;font-size:0.9rem;"><strong>Nota:</strong> la integración con YouTube depende de la disponibilidad de API y cuotas de la cuenta oficial. Si las cuotas son insuficientes, se propondrá una alternativa manual asistida.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="no-incluye">
+        <h2>7. Qué NO incluye este plan</h2>
+        <p>Para mantener el setup accesible, esta oferta se concentra en conversión inmediata y atención automatizada. No incluye:</p>
+        <div class="card-grid">
+            <div class="card">
+                <h4>Funcionalidades futuras</h4>
+                <ul style="margin-bottom:0;font-size:0.9rem;">
+                    <li>Web estratégica nueva o rediseño completo</li>
+                    <li>Mapa interactivo de las 7 manzanas</li>
+                    <li>Directorio comercial avanzado</li>
+                    <li>Control vehicular para hoteles</li>
+                    <li>Sistema de eventos con inscripciones</li>
+                    <li>Dashboard de KPIs avanzado</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Producción y canales</h4>
+                <ul style="margin-bottom:0;font-size:0.9rem;">
+                    <li>Producción de fotografía o video profesional</li>
+                    <li>Respuesta automática en TikTok</li>
+                    <li>Verificación de Meta Business</li>
+                    <li>Diseño de nueva imagen de Supersona</li>
+                    <li>Ecosistema QR de encuestas</li>
+                </ul>
+            </div>
+        </div>
+        <p style="margin-top:1rem;">Estos componentes están contemplados en el <strong>Plan Completo + Verificación META</strong> como escalamiento futuro.</p>
+    </section>
+
+    <section id="garantias">
+        <h2>8. Garantías, soporte y seguridad</h2>
+
+        <div class="card-grid">
+            <div class="card" style="text-align:center;">
+                <span style="font-size:2rem;display:block;margin-bottom:0.5rem;">🛡️</span>
+                <h4 style="margin-top:0;">12 meses de soporte</h4>
+                <p style="font-size:0.9rem;margin-bottom:0;">Soporte técnico activo, ajustes, capacitación y reuniones durante todo el primer año.</p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <span style="font-size:2rem;display:block;margin-bottom:0.5rem;">⚡</span>
+                <h4 style="margin-top:0;">Respuesta rápida</h4>
+                <p style="font-size:0.9rem;margin-bottom:0;">Máximo 4 horas de respuesta y restablecimiento en menos de 24 horas, 24/7.</p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <span style="font-size:2rem;display:block;margin-bottom:0.5rem;">🎓</span>
+                <h4 style="margin-top:0;">Autosuficiencia</h4>
+                <p style="font-size:0.9rem;margin-bottom:0;">Manual de emergencias, videos de capacitación y accesos administrativos.</p>
+            </div>
+            <div class="card" style="text-align:center;">
+                <span style="font-size:2rem;display:block;margin-bottom:0.5rem;">🎁</span>
+                <h4 style="margin-top:0;">Beneficio adicional</h4>
+                <p style="font-size:0.9rem;margin-bottom:0;">Durante los primeros 3 meses, cada nuevo comercio se carga sin setup adicional.</p>
+            </div>
+        </div>
+
+        <h3>8.1 Cobertura del soporte</h3>
+        <ul>
+            <li>30 días de ajustes gratuitos después de la entrega.</li>
+            <li>Corrección de errores técnicos sin costo durante los primeros 60 días.</li>
+            <li>Actualizaciones de la plataforma incluidas.</li>
+            <li>Capacitación inicial y sesiones de refuerzo.</li>
+            <li>Reuniones semanales durante la fase de desarrollo.</li>
+        </ul>
+
+        <h3>8.2 Definición de error grave</h3>
+        <p>Se considera <strong>error grave</strong> cualquier falla que haga que el sistema base sea imposible de usar:</p>
+        <div class="card-grid">
+            <div class="card">
+                <h4 style="color:#991b1b;">Errores graves</h4>
+                <ul style="font-size:0.9rem;margin-bottom:0;">
+                    <li>El catálogo digital no carga.</li>
+                    <li>El chatbot no responde en ningún canal activo.</li>
+                    <li>Los códigos QR no direccionan correctamente.</li>
+                    <li>Falla de seguridad que ponga en riesgo datos.</li>
+                    <li>Caída completa del servidor o dominio.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4 style="color:var(--green);">No son graves</h4>
+                <ul style="font-size:0.9rem;margin-bottom:0;">
+                    <li>Actualización de precios, fotos o textos.</li>
+                    <li>Cambios menores en la interfaz.</li>
+                    <li>Agregar un nuevo servicio.</li>
+                    <li>Preguntas que el bot no responde bien.</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>8.3 Autosuficiencia del Pueblito</h3>
+        <p>Durante los primeros meses dejaremos todo configurado, documentado y probado para que el Pueblito pueda resolver problemas graves de forma autónoma.</p>
+        <ul>
+            <li>Manual de emergencias con pasos para restablecer el servicio.</li>
+            <li>Copias de seguridad automáticas y guía de restauración.</li>
+            <li>Accesos administrativos a servidor, dominio y plataforma.</li>
+            <li>Videos de capacitación para el gestor digital.</li>
+            <li>Sesiones prácticas de simulación de fallas y recuperación.</li>
+        </ul>
+        <div class="info-box">
+            Si después de los 12 meses el Pueblito decide no recontratar el soporte, puede seguir usando el sistema pagando solo los costos fijos base ($130.000/mes), siempre que cuente con su propio gestor capacitado.
+        </div>
+    </section>
+
+    <section id="financiacion">
+        <h2>9. Financiación con los comercios</h2>
+        <p>Para que la mensualidad no recaiga solo sobre la administración, proponemos una cuota de participación:</p>
+        <div class="highlight-box" style="text-align:center;">
+            <span style="font-size:1.8rem;font-weight:800;color:var(--navy);display:block;">$15.000 – $20.000</span>
+            <span style="font-size:0.95rem;">Cuota fija mensual por comercio participante</span>
+        </div>
+
+        <div class="info-box">
+            <strong>Justificación:</strong> con ese aporte se entrena al chatbot con los datos del local (precios, horarios, servicios, ubicación, FAQ) y se le da visibilidad en el catálogo digital. <strong>Mientras más completa sea la información que entregue el comercio, mejor responderá el bot por él.</strong> Además, su servicio puede aparecer con tips y recomendaciones de Supersona.
+        </div>
+
+        <h3>Escenarios de financiación</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Comercios participantes</th><th>Cuota mensual</th><th>Total recaudado</th><th>Cubre</th></tr>
+                <tr><td>20 comercios</td><td>$15.000</td><td>$300.000</td><td>52% de la mensualidad</td></tr>
+                <tr><td>30 comercios</td><td>$15.000</td><td>$450.000</td><td>78% de la mensualidad</td></tr>
+                <tr style="background:#fffbeb;"><td><strong>29 comercios</strong></td><td><strong>$20.000</strong></td><td><strong>$580.000</strong></td><td><strong>100% de la mensualidad</strong></td></tr>
+                <tr><td>30 comercios</td><td>$20.000</td><td>$600.000</td><td>100%+ de la mensualidad</td></tr>
+            </table>
+        </div>
+        <p style="font-size:0.9rem;">Si el recaudo mensual es menor a $580.000, la administración completa la diferencia. La administración puede decidir si cobra la cuota directamente o si la incluye en la administración mensual de cada local.</p>
+
+        <figure>
+            <img src="ImagenesGemini/cuota_comercios_gemini.png" alt="Cuota de comercios">
+            <figcaption>Cuota de comercios — 29 comercios a $20.000 cubren la mensualidad completa.</figcaption>
+        </figure>
+    </section>
+
+    <section id="tiempo">
+        <h2>10. Tiempo de entrega</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h4>Semana 1–2</h4>
+                <p style="margin-bottom:0;">Catálogo digital operativo con los comercios del piloto, si los materiales llegan completos.</p>
+            </div>
+            <div class="card">
+                <h4>Semana 2–4</h4>
+                <p style="margin-bottom:0;">Chatbot omnicanal activo, sujeto a aprobación de Meta.</p>
+            </div>
+            <div class="card">
+                <h4>Si Meta se demora</h4>
+                <p style="margin-bottom:0;">El catálogo se entrega igual y el chatbot se activa en cuanto se apruebe, sin costo adicional.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="argumento">
+        <h2>11. Argumento de negociación para presentar a Sergio</h2>
+        <div class="info-box" style="text-align:center;">
+            <p style="font-size:1.15rem;margin-bottom:0;">“Unifiqué catálogo, Supersona y chatbot omnicanal en una sola infraestructura, con arranque en <strong>$1.500.000</strong> y cuotas mensuales controladas.”</p>
+        </div>
+
+        <div class="argument-grid">
+            <div class="argument-card">
+                <div class="arg-icon">💰</div>
+                <h4>Arranque accesible</h4>
+                <p>Setup de $1.500.000 en dos cuotas de $750.000.</p>
+            </div>
+            <div class="argument-card">
+                <div class="arg-icon">🛡️</div>
+                <h4>Soporte completo por menos de medio tiempo</h4>
+                <p>$580.000/mes incluye costos fijos ($130.000) y soporte técnico 24/7 ($450.000).</p>
+            </div>
+            <div class="argument-card">
+                <div class="arg-icon">🎓</div>
+                <h4>Autosuficiencia real</h4>
+                <p>Capacitación, Google Sheets y manual de emergencias; después del año pagan solo $130.000/mes.</p>
+            </div>
+            <div class="argument-card">
+                <div class="arg-icon">🏪</div>
+                <h4>Se puede pagar sola</h4>
+                <p>Con 29 comercios a $20.000/mes cubren la mensualidad completa.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="escalamiento">
+        <h2>12. Escalamiento futuro</h2>
+        <p>Este plan deja la puerta abierta al modelo completo de transformación digital del Pueblito Boyacense.</p>
+        <div class="card-grid">
+            <div class="card" style="border-color:var(--gold);border-width:2px;">
+                <h4 style="color:var(--navy);">Ecosistema Interactivo</h4>
+                <p style="font-size:0.9rem;">Catálogo de servicios + Supersona como guía digital + chatbot + YouTube/Instagram/Facebook</p>
+                <p style="font-size:0.9rem;margin-bottom:0;"><strong>$1.500.000</strong> setup + <strong>$580.000/mes</strong> durante 12 meses, luego <strong>$130.000/mes</strong> base.</p>
+            </div>
+            <div class="card">
+                <h4 style="color:var(--navy);">Plan Completo + Verificación META</h4>
+                <p style="font-size:0.9rem;">4 pilares completos: web, directorio, mapa, eventos, control vehicular, QR, dashboard, verificación Meta.</p>
+                <p style="font-size:0.9rem;margin-bottom:0;"><strong>$10.400.000</strong> setup + <strong>$420.000/mes</strong>.</p>
+            </div>
+        </div>
+        <div class="highlight-box">
+            El Ecosistema Interactivo puede migrarse al Plan Completo pagando la diferencia correspondiente. Lo invertido en el plan de arranque se considera dentro del valor total del proyecto.
+        </div>
+    </section>
+
+    <section id="riesgos">
+        <h2>13. Riesgos y cómo los gestionamos</h2>
+
+        <h3>13.1 Riesgos principales para el Pueblito</h3>
+        <div class="card-grid">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="margin:0;">Comercios no entregan contenido</h4>
+                    <span class="badge badge-high">Alta</span>
+                </div>
+                <p style="font-size:0.9rem;margin-bottom:0;">Se define un piloto con 5 a 10 comercios motivados. El resto entra en una segunda fase.</p>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="margin:0;">Gestor digital sale del proyecto</h4>
+                    <span class="badge badge-medium">Media</span>
+                </div>
+                <p style="font-size:0.9rem;margin-bottom:0;">Se entrega manual, videos de capacitación y Google Sheets. Se ofrece sesión anual de re-entrenamiento.</p>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="margin:0;">Comercios no quieren pagar cuota</h4>
+                    <span class="badge badge-medium">Media</span>
+                </div>
+                <p style="font-size:0.9rem;margin-bottom:0;">Se comunica el valor desde el inicio. Quien no pague no aparece en el catálogo ni es atendido con prioridad.</p>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="margin:0;">Meta retrasa la verificación</h4>
+                    <span class="badge badge-medium">Media</span>
+                </div>
+                <p style="font-size:0.9rem;margin-bottom:0;">Revisión previa de documentos + 2 reaplicaciones gratuitas si el rechazo es documental.</p>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="margin:0;">Contenido se desactualiza</h4>
+                    <span class="badge badge-high">Alta</span>
+                </div>
+                <p style="font-size:0.9rem;margin-bottom:0;">Capacitación al gestor + reporte mensual de contenido obsoleto durante el soporte.</p>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="margin:0;">Caída o ataque informático</h4>
+                    <span class="badge badge-low">Baja</span>
+                </div>
+                <p style="font-size:0.9rem;margin-bottom:0;">Respaldo diario, monitoreo y restablecimiento en menos de 24 horas, 24/7.</p>
+            </div>
+        </div>
+
+        <h3>13.2 Riesgos operativos para nosotros</h3>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Riesgo</th><th>Probabilidad</th><th>Impacto</th><th>Cómo lo gestionamos</th></tr>
+                <tr><td>El Pueblito no entrega materiales junto con el primer pago</td><td><span class="badge badge-medium">Media</span></td><td>Retrasos y reprocesos</td><td>No se inicia desarrollo hasta recibir el 80% de los requerimientos esenciales y el primer pago.</td></tr>
+                <tr><td>Consumo de IA supera lo estimado</td><td><span class="badge badge-medium">Media</span></td><td>Pérdida de margen</td><td>Límite de 20 intercambios por usuario al día; cobro por excedentes si aplica.</td></tr>
+                <tr><td>Soporte 24/7 genera costos operativos altos</td><td><span class="badge badge-medium">Media</span></td><td>Margen reducido</td><td>El precio cubre emergencias, no desarrollo de nuevas funciones.</td></tr>
+                <tr><td>El Pueblito no renueva soporte después de 12 meses</td><td><span class="badge badge-high">Alta</span></td><td>Ingresos recurrentes caen</td><td>Documentación completa; recontratación se negocia por separado.</td></tr>
+                <tr><td>Cambios en políticas de Meta o WhatsApp</td><td><span class="badge badge-low">Baja</span></td><td>El bot deja de funcionar como se diseñó</td><td>Actualización de API durante el periodo de soporte.</td></tr>
+                <tr><td>Demandas por uso no autorizado de imágenes</td><td><span class="badge badge-low">Baja</span></td><td>Problemas legales</td><td>Se exige autorización escrita de cada comercio antes de publicar.</td></tr>
+            </table>
+        </div>
+    </section>
+
+    <section id="pasos">
+        <h2>14. Próximos pasos</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>
+                    <h4 style="margin-top:0;">Preparar</h4>
+                    <p style="margin-bottom:0;font-size:0.9rem;">Completar la lista de verificación, confirmar comercios participantes, validar cuentas oficiales de Meta, YouTube, Instagram y Facebook, y entregar logos, fotos de Supersona, videos, precios y datos de contacto.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>
+                    <h4 style="margin-top:0;">Firmar y pagar</h4>
+                    <p style="margin-bottom:0;font-size:0.9rem;">Definir si se aplicará la cuota de participación a los comercios, revisar y firmar contrato de 12 meses, y cancelar el primer pago del setup ($750.000) junto con la entrega de materiales.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>
+                    <h4 style="margin-top:0;">Arrancar desarrollo</h4>
+                    <p style="margin-bottom:0;font-size:0.9rem;">Agendar reunión semanal de inicio de desarrollo e iniciar la construcción del Ecosistema Interactivo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <h2>¿Listos para empezar?</h2>
+        <p>Esta propuesta es el resultado de un ajuste comercial pensado para que el Pueblito Boyacense empiece a generar valor digital desde el primer mes, con una inversión controlada y un camino claro hacia la autosuficiencia.</p>
+        <p>Quedamos atentos a la aprobación para agendar la reunión de alineación y comenzar con el Ecosistema Interactivo.</p>
+        <a href="#pasos" class="btn">Ver próximos pasos</a>
+    </section>
+
+</main>
+
+<footer>
+    <p><strong>Pueblito Boyacense — Ecosistema Interactivo</strong></p>
+    <p>Propuesta preparada por Equipo de Desarrollo & Estrategia Digital</p>
+</footer>
+
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Volver arriba">↑</button>
+
+<!-- Chat Widget -->
+<div id="chat-widget">
+    <button id="chat-toggle" onclick="toggleChat()" aria-label="Abrir chat">
+        <span id="chat-icon">💬</span>
+    </button>
+    <div id="chat-window">
+        <div id="chat-header">
+            <div>
+                <strong>Asistente Pueblito</strong>
+                <span id="chat-status">En línea</span>
+            </div>
+            <button onclick="toggleChat()" aria-label="Cerrar chat">✕</button>
+        </div>
+        <div id="chat-messages">
+            <div class="chat-message bot">
+                <div class="chat-bubble">Hola, soy el asistente de esta propuesta. Puedes preguntarme sobre precios, plazos, Supersona, el chatbot o lo que incluye el plan.</div>
+            </div>
+        </div>
+        <div id="chat-suggestions">
+            <button onclick="sendSuggestion(this)">¿Cuánto cuesta el setup?</button>
+            <button onclick="sendSuggestion(this)">¿Qué incluye el plan?</button>
+            <button onclick="sendSuggestion(this)">¿Supersona es el chatbot?</button>
+            <button onclick="sendSuggestion(this)">¿En cuánto tiempo se entrega?</button>
+        </div>
+        <div id="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter')sendMessage()">
+            <button onclick="sendMessage()" aria-label="Enviar">➤</button>
+        </div>
+        <div id="chat-mode" style="font-size:0.7rem;color:#94a3b8;text-align:center;padding:0.4rem;border-top:1px solid var(--slate-border);">
+            Modo: respuestas locales
+        </div>
+    </div>
+</div>
+
+<style>
+    #chat-widget {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 999;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    #chat-toggle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--navy);
+        color: var(--white);
+        border: none;
+        box-shadow: var(--shadow-lg);
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: transform 0.2s, background 0.2s;
+    }
+
+    #chat-toggle:hover { background: var(--navy-light); transform: scale(1.05); }
+
+    #chat-window {
+        position: absolute;
+        bottom: 72px;
+        right: 0;
+        width: 360px;
+        max-width: calc(100vw - 48px);
+        height: 480px;
+        max-height: calc(100vh - 120px);
+        background: var(--white);
+        border: 1px solid var(--slate-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        flex-direction: column;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(20px);
+        transition: all 0.25s ease;
+    }
+
+    #chat-window.open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+
+    #chat-header {
+        background: var(--navy);
+        color: var(--white);
+        padding: 0.9rem 1rem;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #chat-header strong { display: block; color: var(--white); }
+    #chat-header span { font-size: 0.75rem; opacity: 0.8; }
+    #chat-header button { background: none; border: none; color: var(--white); font-size: 1.1rem; cursor: pointer; }
+
+    #chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .chat-message { display: flex; }
+    .chat-message.user { justify-content: flex-end; }
+    .chat-message.bot { justify-content: flex-start; }
+
+    .chat-bubble {
+        max-width: 80%;
+        padding: 0.75rem 1rem;
+        border-radius: 16px;
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+
+    .chat-message.user .chat-bubble {
+        background: var(--navy);
+        color: var(--white);
+        border-bottom-right-radius: 4px;
+    }
+
+    .chat-message.bot .chat-bubble {
+        background: var(--slate-light);
+        color: var(--slate);
+        border-bottom-left-radius: 4px;
+    }
+
+    #chat-suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        border-top: 1px solid var(--slate-border);
+    }
+
+    #chat-suggestions button {
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+        color: var(--navy-light);
+        font-size: 0.78rem;
+        padding: 0.35rem 0.6rem;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    #chat-suggestions button:hover { background: #dbeafe; }
+
+    #chat-input-area {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        border-top: 1px solid var(--slate-border);
+    }
+
+    #chat-input {
+        flex: 1;
+        border: 1px solid var(--slate-border);
+        border-radius: 999px;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.9rem;
+        outline: none;
+    }
+
+    #chat-input:focus { border-color: var(--navy-light); }
+
+    #chat-input-area button {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--navy);
+        color: var(--white);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #chat-input-area button:hover { background: var(--navy-light); }
+
+    .chat-typing {
+        display: flex;
+        gap: 0.25rem;
+        padding: 0.6rem 0.9rem;
+        background: var(--slate-light);
+        border-radius: 16px;
+        width: fit-content;
+    }
+
+    .chat-typing span {
+        width: 6px;
+        height: 6px;
+        background: var(--slate);
+        border-radius: 50%;
+        animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .chat-typing span:nth-child(1) { animation-delay: -0.32s; }
+    .chat-typing span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+        0%, 80%, 100% { transform: scale(0); }
+        40% { transform: scale(1); }
+    }
+
+    @media (max-width: 480px) {
+        #chat-window { width: calc(100vw - 32px); right: -8px; }
+    }
+</style>
+
+<script src="chat-config.js"></script>
+<script>
+    // === FAQ local ===
+    const faq = [
+        {
+            keys: ['setup','costo','precio','arranque','inicial','1.500','1500','cuanto cuesta','valor'],
+            answer: 'El setup inicial es de $1.500.000 COP, pagado en dos cuotas de $750.000: una al firmar (con materiales) y otra a la entrega operativa.'
+        },
+        {
+            keys: ['mensualidad','mensual','580','580.000','580000','mensualidad primer año','pago mensual'],
+            answer: 'Durante los primeros 12 meses la mensualidad es de $580.000 COP: $130.000 de costos fijos base y $450.000 de mantenimiento y soporte 24/7.'
+        },
+        {
+            keys: ['130','130.000','130000','mes 13','despues del año','costos base','año','13'],
+            answer: 'A partir del mes 13, si no recontratan el soporte, solo pagan $130.000 COP mensuales por costos fijos de servidor, tokens y plataforma.'
+        },
+        {
+            keys: ['supersona','muñeco','es el chatbot','personaje','mascota'],
+            answer: 'Supersona es el guía cultural y embajador digital. No es el chatbot: el chatbot con IA responde automáticamente, y Supersona da la bienvenida, recomienda servicios y comparte tips culturales.'
+        },
+        {
+            keys: ['chatbot','bot','whatsapp','instagram','facebook','ia','inteligencia artificial','responde'],
+            answer: 'El chatbot omnicanal atiende WhatsApp, Instagram y Facebook con IA 24/7. Si no resuelve, envía hasta 3 mensajes y transfiere a una persona real.'
+        },
+        {
+            keys: ['incluye','que incluye','que trae','plan incluye'],
+            answer: 'Incluye catálogo digital de servicios tipo Reels/QR, panel de administración, chatbot omnicanal con IA, integración con YouTube/Instagram/Facebook y capacitación.'
+        },
+        {
+            keys: ['no incluye','que no incluye','excluye'],
+            answer: 'No incluye web nueva, mapa interactivo, directorio avanzado, control vehicular, eventos con inscripciones, producción de video, respuesta automática en TikTok ni verificación Meta.'
+        },
+        {
+            keys: ['tiempo','plazo','entrega','semanas','cuanto tarda','cuando'],
+            answer: 'La entrega total es de 2 a 4 semanas desde la firma y entrega de materiales. El catálogo puede estar listo en 2 semanas; el chatbot depende de la aprobación de Meta.'
+        },
+        {
+            keys: ['comercios','cuota','15.000','20.000','15000','20000','financiacion','pagar sola'],
+            answer: 'Cada comercio puede aportar entre $15.000 y $20.000 mensuales. Con 29 comercios a $20.000 se cubre toda la mensualidad de $580.000.'
+        },
+        {
+            keys: ['requisitos','necesito','que necesito','antes de firmar','cuentas','materiales'],
+            answer: 'Se necesitan cuentas oficiales de Facebook, Instagram, WhatsApp y YouTube; dominio web; NIT; autorizaciones de marca; y materiales de los comercios (fotos, videos, precios, FAQ).'
+        },
+        {
+            keys: ['soporte','mantenimiento','caidas','ataque','24 horas','24/7'],
+            answer: 'Durante 12 meses incluimos soporte técnico 24/7 con respuesta máxima de 4 horas y restablecimiento de fallas graves en menos de 24 horas, incluidos fines de semana.'
+        },
+        {
+            keys: ['tiktok','youtube','redes sociales','instagram','facebook'],
+            answer: 'Incluimos respuesta automática en YouTube, Instagram y Facebook. TikTok no permite respuesta automática de comentarios, así que entregamos plantillas para respuesta manual.'
+        },
+        {
+            keys: ['audios','voz','notas de voz','mensajes de audio'],
+            answer: 'La API de WhatsApp permite audios, pero en este plan el bot responde principalmente por texto. Los audios se usan como complemento en bienvenidas o tips de Supersona.'
+        },
+        {
+            keys: ['google sheets','sheets','excel','control'],
+            answer: 'Todo el control del contenido, tareas y métricas queda en Google Sheets para que cualquier persona del equipo del Pueblito pueda administrarlo sin ser técnica.'
+        },
+        {
+            keys: ['error grave','falla grave','que se considera grave'],
+            answer: 'Es error grave cuando el catálogo no carga, el chatbot no responde en ningún canal, los QR fallan o hay caída total del servidor. Actualizar precios o agregar servicios no es grave.'
+        },
+        {
+            keys: ['escalamiento','plan completo','futuro','10.400.000','4 pilares'],
+            answer: 'Después del Ecosistema Interactivo se puede migrar al Plan Completo ($10.400.000 setup + $420.000/mes) que incluye web, mapa, directorio, eventos, control vehicular y más.'
+        },
+        {
+            keys: ['hola','buenas','buen dia','que tal','ayuda'],
+            answer: '¡Hola! Puedo responder preguntas sobre precios, plazos, Supersona, el chatbot, requisitos y lo que incluye la propuesta. ¿En qué te ayudo?'
+        }
+    ];
+
+    const fallbackAnswer = "No tengo una respuesta exacta para esa pregunta. Te sugiero revisar la sección correspondiente en la propuesta o escribirnos directamente para aclarar tu duda.";
+
+    const chatWindow = document.getElementById('chat-window');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatModeLabel = document.getElementById('chat-mode');
+
+    let useApi = false;
+    if (typeof window.CHAT_CONFIG !== 'undefined' && window.CHAT_CONFIG.apiKey) {
+        useApi = true;
+        chatModeLabel.textContent = 'Modo: IA (' + (window.CHAT_CONFIG.provider || 'openai') + ')';
+    }
+
+    function toggleChat() {
+        chatWindow.classList.toggle('open');
+        if (chatWindow.classList.contains('open')) {
+            setTimeout(() => chatInput.focus(), 100);
+        }
+    }
+
+    function appendMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = 'chat-message ' + sender;
+        div.innerHTML = '<div class="chat-bubble">' + escapeHtml(text) + '</div>';
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTyping() {
+        const div = document.createElement('div');
+        div.className = 'chat-message bot';
+        div.id = 'typing-indicator';
+        div.innerHTML = '<div class="chat-typing"><span></span><span></span><span></span></div>';
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function hideTyping() {
+        const el = document.getElementById('typing-indicator');
+        if (el) el.remove();
+    }
+
+    function escapeHtml(text) {
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    function findLocalAnswer(question) {
+        const q = question.toLowerCase();
+        let best = null;
+        let maxScore = 0;
+        for (const item of faq) {
+            let score = 0;
+            for (const key of item.keys) {
+                if (q.includes(key.toLowerCase())) score++;
+            }
+            if (score > maxScore) {
+                maxScore = score;
+                best = item;
+            }
+        }
+        return (best && maxScore > 0) ? best.answer : fallbackAnswer;
+    }
+
+    async function handleApiQuestion(question) {
+        const cfg = window.CHAT_CONFIG;
+        const provider = cfg.provider || 'openai';
+        const model = cfg.model || (provider === 'openai' ? 'gpt-3.5-turbo' : provider === 'gemini' ? 'gemini-pro' : 'claude-3-haiku-20240307');
+
+        const context = `Eres un asistente que responde preguntas sobre esta propuesta comercial para el Pueblito Boyacense. Responde de forma clara, breve y profesional en español. Precios: setup $1.500.000 en 2 cuotas de $750.000; mensualidad $580.000 durante 12 meses ($130.000 costos fijos + $450.000 soporte); a partir del mes 13 solo $130.000. Incluye catálogo digital tipo Reels/QR, panel admin, chatbot omnicanal IA para WhatsApp/Instagram/Facebook, integración YouTube. No incluye TikTok automático, web nueva, producción de video. Supersona es guía cultural, no el chatbot. Tiempo 2-4 semanas. Control en Google Sheets. Soporte 24/7.`;
+
+        try {
+            let response;
+            if (provider === 'openai') {
+                response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cfg.apiKey },
+                    body: JSON.stringify({ model: model, messages: [{role:'system',content:context},{role:'user',content:question}] })
+                });
+                const data = await response.json();
+                return data.choices?.[0]?.message?.content || fallbackAnswer;
+            } else if (provider === 'gemini') {
+                response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cfg.apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: context + '\n\nPregunta: ' + question }] }] })
+                });
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || fallbackAnswer;
+            } else if (provider === 'anthropic') {
+                response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': cfg.apiKey, 'anthropic-version': '2023-06-01' },
+                    body: JSON.stringify({ model: model, max_tokens: 512, messages: [{role:'user',content:context + '\n\nPregunta: ' + question}] })
+                });
+                const data = await response.json();
+                return data.content?.[0]?.text || fallbackAnswer;
+            }
+            return fallbackAnswer;
+        } catch (e) {
+            console.error(e);
+            return 'Hubo un error al conectar con la API. Revisa la configuración en chat-config.js. Mientras tanto, intenta una pregunta más específica.';
+        }
+    }
+
+    async function sendMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+        appendMessage(text, 'user');
+        chatInput.value = '';
+        showTyping();
+
+        let answer;
+        if (useApi) {
+            answer = await handleApiQuestion(text);
+        } else {
+            await new Promise(r => setTimeout(r, 600));
+            answer = findLocalAnswer(text);
+        }
+
+        hideTyping();
+        appendMessage(answer, 'bot');
+    }
+
+    function sendSuggestion(btn) {
+        chatInput.value = btn.textContent;
+        sendMessage();
+    }
+
+    // === UI interactions ===
+    function toggleAccordion(btn) {
+        const acc = btn.parentElement;
+        acc.classList.toggle('open');
+    }
+
+    function openTab(btn, panelId) {
+        const tabs = btn.closest('.tabs');
+        tabs.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        tabs.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(panelId).classList.add('active');
+    }
+
+    // === Progress bar & nav active state ===
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('#main-nav a');
+
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        document.getElementById('progress-bar').style.width = progress + '%';
+
+        let current = '';
+        sections.forEach(section => {
+            const top = section.offsetTop - 120;
+            if (scrollTop >= top) current = section.getAttribute('id');
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+        });
+
+        const backBtn = document.getElementById('back-to-top');
+        if (scrollTop > 500) backBtn.classList.add('visible');
+        else backBtn.classList.remove('visible');
+    });
+</script>
+
+</body>
+</html>
