@@ -29,3 +29,5 @@ Usa el archivo `Contenido_Pueblito_Boyacense_simple.xlsx`. Solo tiene 3 hojas pa
 3. **Categorías y Manzanas** — listas de apoyo.
 
 Las filas de ejemplo están marcadas en color amarillo; bórralas antes de entregar.
+
+**Plantilla Google Sheets:** https://docs.google.com/spreadsheets/d/1wQBgO2r1ZGSoL3ZxU3RgTweV0PDe8Zar/edit?usp=sharing&ouid=111245396370179423574&rtpof=true&sd=true

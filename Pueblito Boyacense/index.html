@@ -617,6 +617,61 @@
 
         .btn:hover { background: #b8941f; }
 
+        /* CTA Sheets */
+        .cta-sheets {
+            background: linear-gradient(135deg, #ffffff 0%, #fef3c7 100%);
+            border: 2px solid var(--gold);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(197,160,40,0.15);
+        }
+
+        .cta-sheets .sheets-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-sheets h4 {
+            color: var(--navy);
+            margin: 0 0 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .cta-sheets p {
+            color: var(--slate);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-sheets .btn-sheets {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--green);
+            color: var(--white);
+            font-weight: 700;
+            padding: 0.9rem 1.75rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(46,125,50,0.25);
+        }
+
+        .cta-sheets .btn-sheets:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+        }
+
+        .cta-sheets .btn-sheets::before {
+            content: '📊';
+            font-size: 1.2rem;
+        }
+
         /* Footer */
         footer {
             background: var(--navy-dark);
@@ -1375,6 +1430,13 @@
                 <div>
                     <h4 style="margin-top:0;">Firmar y pagar</h4>
                     <p style="margin-bottom:0;font-size:0.9rem;">Definir si se aplicará la cuota de participación a los comercios, revisar y firmar contrato de 12 meses, y cancelar el primer pago del setup ($750.000) junto con la entrega de materiales.</p>
+
+                    <div class="cta-sheets">
+                        <div class="sheets-icon">📊</div>
+                        <h4>Empiece a cargar el contenido ahora</h4>
+                        <p>Use nuestra plantilla simplificada de Google Sheets para registrar comercios, servicios, precios, fotos y preguntas para el chatbot. Mientras más completa esté, más rápido arranca el proyecto.</p>
+                        <a href="https://docs.google.com/spreadsheets/d/1wQBgO2r1ZGSoL3ZxU3RgTweV0PDe8Zar/edit?usp=sharing&ouid=111245396370179423574&rtpof=true&sd=true" target="_blank" rel="noopener noreferrer" class="btn-sheets">Abrir plantilla en Google Sheets</a>
+                    </div>
                 </div>
             </div>
             <div class="step">
