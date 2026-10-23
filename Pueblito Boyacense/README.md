@@ -19,3 +19,13 @@ Para usar una API de IA real (Gemini, OpenAI o Anthropic):
 3. Recarga la página.
 
 **No subas `chat-config.js` con una API key real.** Ese archivo ya está ignorado en `.gitignore`.
+
+## Cargar contenido de comercios
+
+Usa el archivo `Contenido_Pueblito_Boyacense_simple.xlsx`. Solo tiene 3 hojas para llenar:
+
+1. **Mis Servicios** — una fila por cada servicio o producto.
+2. **Preguntas Chatbot** — preguntas frecuentes y respuestas.
+3. **Categorías y Manzanas** — listas de apoyo.
+
+Las filas de ejemplo están marcadas en color amarillo; bórralas antes de entregar.
